@@ -49,7 +49,7 @@
                         <UFormGroup class="flex flex-col" label="Raça">
                             <USelectMenu 
                                 v-model="selectedBreeds" 
-                                :options="breeds.map(breed => ({ label: breed.name, value: breed.id }))" 
+                                :options="breeds.map(breed => ({ label: breed.name, value: breed.id }))"
                                 multiple 
                                 placeholder="Selecione a raça" 
                             />
@@ -87,29 +87,35 @@ const { species, loading, error } = useSpecies();
 
 const sizes = ['Filhote', 'Pequeno', 'Médio', 'Grande'];
 const colors = ['Branco', 'Preto', 'Marrom', 'Cinza', 'Dourado', 'Bege', 'Amarelo', 'Azul', 'Vermelho', 'Verde'];
-const breeds = ref([]); // Armazenará os dados completos das raças
+const breeds = ref([]);
 
 const selectedSpecies = ref<{ [key: string]: boolean }>({});
 const selectedSizes = ref([]);
 const selectedColors = ref([]);
-const selectedBreeds = ref([]); // IDs das raças selecionadas
+const selectedBreeds = ref([]);
 
-// Função para buscar as raças com base nas espécies selecionadas
 async function fetchBreedsBySpecies(speciesIds: string[]) {
     try {
-        const response = await fetch(`http://localhost:3100/breed?species=${speciesIds.join(',')}`);
+        const response = await fetch(`http://localhost:3100/breed/species`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ species: speciesIds })
+        });
+
         if (!response.ok) {
             throw new Error('Erro ao buscar raças');
         }
+
         const data = await response.json();
-        breeds.value = data; // Armazena os objetos de raças completos
+        breeds.value = data;
     } catch (error) {
         console.error('Erro ao buscar raças:', error);
         breeds.value = [];
     }
 }
 
-// Observa mudanças nas espécies selecionadas
 watch(
     selectedSpecies,
     (newSelectedSpecies) => {
@@ -119,20 +125,17 @@ watch(
             fetchBreedsBySpecies(selectedSpeciesIds);
         } else {
             breeds.value = [];
-            selectedBreeds.value = []; // Limpa as raças selecionadas se nenhuma espécie estiver selecionada
+            selectedBreeds.value = [];
         }
     },
     { deep: true }
 );
 
-// Observa mudanças nas raças e filtra as raças selecionadas
 watch(breeds, (newBreeds) => {
-    // Mantém apenas as raças que ainda estão disponíveis após a atualização
     const validSelectedBreeds = selectedBreeds.value.filter(breedId => newBreeds.some(breed => breed.id === breedId));
     selectedBreeds.value = validSelectedBreeds;
 });
 
-// Inicializa as espécies com "false" no selectedSpecies
 watch(species, (newSpecies) => {
     newSpecies.forEach(specie => {
         selectedSpecies.value[specie.id] = false;
