@@ -41,6 +41,24 @@ export class PetManager {
             this.loading.value = false;
         }
     }
+
+    async getPetById(id: string) {
+        if (!id || typeof id !== 'string') {
+            throw new Error('ID inválido');
+        }
+
+        this.loading.value = true;
+        this.error.value = null;
+        try {
+            const data = await this.petService.findById(id);
+            return data;
+        } catch (err) {
+            this.error.value = 'Erro ao buscar pets.';
+            throw err;
+        } finally {
+            this.loading.value = false;
+        }
+    }
 }
 
 export function usePet() {
@@ -50,6 +68,7 @@ export function usePet() {
         pets: manager.pets,
         loading: manager.loading,
         error: manager.error,
-        getPetsByFilters: manager.getPetsByFilters.bind(manager)
+        getPetsByFilters: manager.getPetsByFilters.bind(manager),
+        getPetById: manager.getPetById.bind(manager),
     };
 }

@@ -117,11 +117,13 @@ const handleSubmit = async () => {
     const selectedFilters = {
         name: name.value,
         species: Object.keys(selectedSpecies.value).filter(id => selectedSpecies.value[id]),
-        breeds: selectedBreeds.value,
-        sizes: selectedSizes.value,
-        colors: selectedColors.value,
+        breeds: selectedBreeds.value.map(breed => breed.value),
+        sizes: selectedSizes.value.map(size => size.value),
+        colors: selectedColors.value.map(color => color.value),
         gender: Object.keys(selectedGender.value).filter(key => selectedGender.value[key])
     };
+
+    console.log(selectedFilters)
 
     await getPetsByFilters(selectedFilters);
 
