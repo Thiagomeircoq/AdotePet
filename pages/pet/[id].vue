@@ -1,11 +1,23 @@
 <template>
-    <div class="bg-cover bg-center h-screen bg-stone-100">
+    <div class="bg-cover bg-center h-full bg-stone-100">
         <div class="container max-w-7xl mx-auto flex flex-col">
             <AppHeader />
             <section v-if="!loading && pet" class="flex space-x-5 mt-5 gap-5">
                 <div class="w-1/2">
-                    <img :src="pet?.images?.[0]?.image_url ? `http://${pet.images[0].image_url}` : 'https://via.placeholder.com/150'"
-                        alt="Pet" class="w-full object-cover rounded-lg" />
+                    <div class="flex flex-col gap-4">
+                        <img :src="pet?.images?.[0]?.image_url ? `http://${pet.images[0].image_url}` : 'https://via.placeholder.com/150'"
+                            alt="Pet" class="w-full object-cover rounded-lg" />
+                        <div class="flex gap-4">
+                            <img :src="'https://via.placeholder.com/150'" alt="Pet"
+                                class="w-full object-cover rounded-lg" />
+                            <img :src="'https://via.placeholder.com/150'" alt="Pet"
+                                class="w-full object-cover rounded-lg" />
+                            <img :src="'https://via.placeholder.com/150'" alt="Pet"
+                                class="w-full object-cover rounded-lg" />
+                            <img :src="'https://via.placeholder.com/150'" alt="Pet"
+                                class="w-full object-cover rounded-lg" />
+                        </div>
+                    </div>
                 </div>
                 <div class="flex flex-col">
                     <div class="flex flex-col gap-1">
