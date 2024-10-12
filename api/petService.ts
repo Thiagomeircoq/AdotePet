@@ -15,4 +15,14 @@ export class PetService extends ApiService {
             throw error;
         }
     }
+
+    async findById(id: string) {
+        try {
+            const response = await axios.get(`${this.baseUrl}/pet/${id}`);
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao buscar o pet:', error);
+            throw error;
+        }
+    }
 }
