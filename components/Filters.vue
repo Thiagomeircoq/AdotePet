@@ -57,7 +57,7 @@ import { ref, watch, computed } from 'vue';
 const sizes = [
     { value: 'FILHOTE', label: 'Filhote' },
     { value: 'PEQUENO', label: 'Pequeno' },
-    { value: 'MÉDIO', label: 'Médio' },
+    { value: 'MEDIO', label: 'Médio' },
     { value: 'GRANDE', label: 'Grande' }
 ];
 
