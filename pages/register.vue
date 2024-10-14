@@ -3,8 +3,8 @@ import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 
 const schema = z.object({
-    email: z.string().email('Invalid email'),
-    password: z.string().min(8, 'Must be at least 8 characters'),
+    email: z.string().email('Email invalido'),
+    password: z.string().min(8, 'A senha deve conter no mínimo 8 caracteres'),
     rememberMe: z.boolean().optional()
 })
 
@@ -13,12 +13,10 @@ type Schema = z.output<typeof schema>
 const state = reactive({
     email: '',
     password: '',
-    rememberMe: false,
-    submitted: false
+    rememberMe: false
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-    state.submitted = true
     console.log(event.data)
 }
 </script>
@@ -34,18 +32,18 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                     </div>
                     <UForm :schema="schema" :state="state" class="flex flex-col mt-5" @submit="onSubmit">
                         <div class="flex flex-col gap-5">
-                            <UFormGroup label="E-mail" name="email" :error="state.submitted">
+                            <UFormGroup label="E-mail" name="email" required>
                                 <UInput icon="i-heroicons-envelope" size="lg" v-model="state.email" type="email"
-                                    variant="outline" placeholder="E-mail" />
+                                    variant="outline" placeholder="email@exemplo.com" />
                             </UFormGroup>
-                            <UFormGroup label="Senha" name="password" :error="state.submitted">
+                            <UFormGroup label="Senha" name="password" required>
                                 <UInput icon="i-heroicons-lock-closed" size="lg" v-model="state.password"
                                     type="password" variant="outline" placeholder="Senha" />
                             </UFormGroup>
                         </div>
                         <div class="flex items-center mt-3 justify-between">
-                            <UCheckbox v-model="state.rememberMe" label="Lembre-se de mim" />
-                            <a href="#" class="text-amber-600 text-sm hover:underline">Esqueceu sua senha?</a>
+                            <UCheckbox v-model="state.rememberMe" label="Remember me" />
+                            <a href="#" class="text-amber-600 text-sm hover:underline">Forgot your password?</a>
                         </div>
                         <UButton class="flex justify-center mt-5" size="lg" color="amber" variant="solid" trailing>
                             Entrar
