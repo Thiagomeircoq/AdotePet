@@ -16,9 +16,12 @@
     "@nuxtjs/ionic": "^0.15.1",
     "@vueuse/motion": "^2.2.5",
     "axios": "^1.7.7",
+    "date-fns": "^2.30.0",
     "nuxt": "^3.13.0",
     "nuxt-zod-i18n": "^1.10.0",
+    "v-calendar": "^3.1.2",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "zod-i18n-map": "^2.27.0"
   }
 }
