@@ -40,19 +40,22 @@
 import { reactive, ref } from 'vue';
 import PersonForm from '~/components/auth/PersonForm.vue';
 import UserForm from '~/components/auth/UserForm.vue';
+import { useAuth } from '@/composables/useAuth';
+import { formatDate } from '~/utils';
 
-const currentStep = ref(2);
+const currentStep = ref(1);
+const { register, loading, error } = useAuth();
 
 const userData = reactive({
     email: '',
     password: '',
-    confirm_password: ''
+    password_confirm: ''
 });
 
 const personData = reactive({
     first_name: '',
     last_name: '',
-    birth_date: '',
+    birthdate: '',
     gender: ''
 });
 
@@ -61,16 +64,26 @@ const handleNextStep = (data: any) => {
     currentStep.value = 2;
 };
 
-const handleSubmit = (data: any) => {
+const handleSubmit = async (data: any) => {
     Object.assign(personData, data);
 
-    console.log(userData)
-
     const completeData = {
-        ...userData,
-        ...personData
+        email: userData.email,
+        password: userData.password,
+        password_confirm: userData.password_confirm,
+        person: {
+            first_name: personData.first_name,
+            last_name: personData.last_name,
+            birthdate: formatDate(personData.birthdate),
+            gender: personData.gender.value
+        }
     };
 
-    console.log("Dados completos:", completeData);
+    try {
+        await register(completeData);
+        console.log('Usuário registrado com sucesso');
+    } catch (err) {
+        console.error('Erro ao registrar o usuário', err);
+    }
 };
 </script>
