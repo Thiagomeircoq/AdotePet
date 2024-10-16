@@ -71,6 +71,6 @@ const handleSubmit = (data: any) => {
         ...personData
     };
 
-    console.log("Dados completos:", completeData);
+    console.log("Dados completos: ", completeData);
 };
 </script>
