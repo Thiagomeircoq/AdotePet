@@ -3,7 +3,7 @@
  * @param cpf - CPF em formato de string.
  * @returns Retorna true se o CPF for válido, false caso contrário.
  */
-export default function validarCPF(cpf: string): boolean {
+export function validarCPF(cpf: string): boolean {
     cpf = cpf.replace(/\D/g, "");
 
     if (cpf.length !== 11) return false;
@@ -29,4 +29,65 @@ export default function validarCPF(cpf: string): boolean {
     if (segundoDigitoVerificador !== Number(cpf[10])) return false;
 
     return true;
+}
+
+
+/**
+ * Converte uma data entre os formatos BR (dd/mm/yyyy) e US (yyyy-mm-dd).
+ * Se a data estiver no formato BR, converte para o formato US, e vice-versa.
+ * @param inputDate - Data em formato string.
+ * @returns Retorna a data no formato convertido.
+ * @throws Erro se o formato da data for inválido.
+ */
+export function formatDate(inputDate: string): string {
+    inputDate = inputDate.replace(/[^\d/-]/g, "");
+
+    const brPattern = /^\d{2}\/\d{2}\/\d{4}$/;
+
+    const usPattern = /^\d{4}-\d{2}-\d{2}$/;
+
+    if (brPattern.test(inputDate)) {
+        const [day, month, year] = inputDate.split('/');
+        return `${year}-${month}-${day}`;
+    }
+
+    if (usPattern.test(inputDate)) {
+        const [year, month, day] = inputDate.split('-');
+        return `${day}/${month}/${year}`;
+    }
+
+    throw new Error('Formato de data inválido');
+}
+
+/**
+ * Valida uma senha de acordo com critérios predefinidos.
+ * A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula,
+ * um número, um caractere especial e não deve conter sequências de caracteres.
+ * @param password - A senha a ser validada.
+ * @returns Uma lista de mensagens de erro caso a senha não atenda aos requisitos.
+ */
+export function passwordValidation(password: string): string[] {
+    const errors: string[] = [];
+
+    if (!/[A-Z]/.test(password)) {
+        errors.push("Password must contain at least one uppercase letter");
+    }
+
+    if (!/[a-z]/.test(password)) {
+        errors.push("Password must contain at least one lowercase letter");
+    }
+
+    if (!/[0-9]/.test(password)) {
+        errors.push("Password must contain at least one number");
+    }
+
+    if (!/[^A-Za-z0-9]/.test(password)) {
+        errors.push("Password must contain at least one special character");
+    }
+
+    if (/(012|123|234|345|456|567|678|789|890|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|ABC|BCD|CDE|DEF|EFG|FGH|GHI|HIJ|IJK|JKL|KLM|LMN|MNO|NOP|OPQ|PQR|QRS|RST|STU|UVW|VWX|WXY|XYZ)/.test(password)) {
+        errors.push("Password must not contain sequential characters");
+    }
+
+    return errors;
 }

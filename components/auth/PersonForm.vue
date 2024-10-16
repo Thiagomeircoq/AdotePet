@@ -18,8 +18,8 @@
                     <USelectMenu v-model="PersonState.gender" placeholder="Selecione o gênero" size="lg"
                         :options="genderOptions" />
                 </UFormGroup>
-                <UFormGroup label="Data de nascimento" name="birth_date" required>
-                    <UInput icon="i-heroicons-calendar" size="lg" v-model="PersonState.birth_date" variant="outline"
+                <UFormGroup label="Data de nascimento" name="birthdate" required>
+                    <UInput icon="i-heroicons-calendar" size="lg" v-model="PersonState.birthdate" variant="outline"
                         v-mask="'##/##/####'" placeholder="00/00/0000" />
                 </UFormGroup>
             </div>
@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import { reactive, ref, defineEmits, watchEffect } from 'vue';
 import { z } from 'zod';
-import validarCPF from '~/utils';
+import { validarCPF } from '~/utils';
 
 const emit = defineEmits(['prevStep', 'submitForm']);
 
@@ -54,29 +54,30 @@ const genderOptions = [
     { value: 'F', label: 'Feminino' },
 ];
 
-const validGenderValues = genderOptions.map(option => option.value);
-
 const PersonRegister = z.object({
     first_name: z.string().min(1, 'O primeiro nome é obrigatório'),
     last_name: z.string().min(1, 'O último nome é obrigatório'),
-    birth_date: z.string().min(1, 'A data de nascimento é obrigatória'),
+    birthdate: z.string().min(1, 'A data de nascimento é obrigatória'),
     cpf: z.string()
         .min(11, 'O CPF deve conter 11 dígitos')
         .max(14, 'O CPF não pode exceder 14 caracteres')
         .refine((cpf) => validarCPF(cpf), {
             message: 'CPF inválido',
         }),
-    gender: z.string()
-        .refine(value => validGenderValues.includes(value), {
-            message: "Selecione um gênero válido",
+    gender: z.object({
+        value: z.string()
+            .refine((val) => ['M', 'F'].includes(val), {
+            message: 'O gênero selecionado é inválido',
         }),
+        label: z.string()
+    })
 });
 
 
 const PersonState = reactive({
     first_name: '',
     last_name: '',
-    birth_date: '',
+    birthdate: '',
     cpf: '',
     about: '',
     gender: '',
