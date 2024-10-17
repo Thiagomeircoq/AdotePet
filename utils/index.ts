@@ -69,25 +69,17 @@ export function formatDate(inputDate: string): string {
 export function passwordValidation(password: string): string[] {
     const errors: string[] = [];
 
-    if (!/[A-Z]/.test(password)) {
-        errors.push("Password must contain at least one uppercase letter");
-    }
+    if (password.length < 8)
+        errors.push("A senha deve ter pelo menos 8 caracteres");
 
-    if (!/[a-z]/.test(password)) {
-        errors.push("Password must contain at least one lowercase letter");
-    }
+    if (!/[A-Z]/.test(password))
+        errors.push("A senha deve conter pelo menos uma letra maiúscula");
 
-    if (!/[0-9]/.test(password)) {
-        errors.push("Password must contain at least one number");
-    }
+    if (!/[0-9]/.test(password))
+        errors.push("A senha deve conter pelo menos um número");
 
-    if (!/[^A-Za-z0-9]/.test(password)) {
-        errors.push("Password must contain at least one special character");
-    }
-
-    if (/(012|123|234|345|456|567|678|789|890|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|ABC|BCD|CDE|DEF|EFG|FGH|GHI|HIJ|IJK|JKL|KLM|LMN|MNO|NOP|OPQ|PQR|QRS|RST|STU|UVW|VWX|WXY|XYZ)/.test(password)) {
-        errors.push("Password must not contain sequential characters");
-    }
+    if (!/[^A-Za-z0-9]/.test(password))
+        errors.push("A senha deve conter pelo menos um caractere especial");
 
     return errors;
 }
