@@ -66,7 +66,7 @@ const handleNextStep = (data: any) => {
 
 const handleSubmit = async (data: any) => {
     Object.assign(personData, data);
-
+    
     const completeData = {
         email: userData.email,
         password: userData.password,
