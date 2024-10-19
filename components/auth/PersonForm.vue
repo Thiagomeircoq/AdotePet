@@ -48,7 +48,6 @@ const emit = defineEmits(['prevStep', 'submitForm']);
 
 const props = defineProps(['personData']);
 
-
 const genderOptions = [
     { value: 'M', label: 'Masculino' },
     { value: 'F', label: 'Feminino' },
@@ -75,12 +74,12 @@ const PersonRegister = z.object({
 
 
 const PersonState = reactive({
-    first_name: '',
-    last_name: '',
-    birthdate: '',
-    cpf: '',
-    about: '',
-    gender: '',
+    first_name: props.personData.first_name || '',
+    last_name: props.personData.last_name || '',
+    birthdate: props.personData.birthdate || '',
+    cpf: props.personData.cpf || '',
+    about: props.personData.about || '',
+    gender: props.personData.gender || '',
 });
 
 watchEffect(() => {
