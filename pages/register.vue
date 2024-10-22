@@ -41,7 +41,7 @@ import { reactive, ref, watch } from 'vue';
 import PersonForm from '~/components/auth/PersonForm.vue';
 import UserForm from '~/components/auth/UserForm.vue';
 import { useAuth } from '@/composables/useAuth';
-import { formatDate } from '~/utils';
+import { formatDate, formatCPF } from '~/utils';
 
 const currentStep = ref(1);
 const { register, loading, error } = useAuth();
@@ -57,6 +57,8 @@ const personData = reactive({
     first_name: '',
     last_name: '',
     birthdate: '',
+    cpf: '',
+    about: '',
     gender: ''
 });
 
@@ -75,8 +77,10 @@ const handleSubmit = async (data: any) => {
         person: {
             first_name: personData.first_name,
             last_name: personData.last_name,
+            cpf: formatCPF(personData.cpf),
             birthdate: formatDate(personData.birthdate),
-            gender: personData.gender.value
+            gender: personData.gender.value,
+            about: personData.about
         }
     };
 

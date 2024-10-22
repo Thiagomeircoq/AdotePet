@@ -83,3 +83,12 @@ export function passwordValidation(password: string): string[] {
 
     return errors;
 }
+
+/**
+ * Formata o CPF, removendo todos os caracteres que não são dígitos.
+ * @param cpf - CPF em formato de string.
+ * @returns Retorna o CPF contendo apenas números.
+ */
+export function formatCPF(cpf: string): string {
+    return cpf.replace(/\D/g, '');
+}
