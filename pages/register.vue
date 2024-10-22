@@ -37,14 +37,15 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import PersonForm from '~/components/auth/PersonForm.vue';
 import UserForm from '~/components/auth/UserForm.vue';
 import { useAuth } from '@/composables/useAuth';
-import { formatDate } from '~/utils';
+import { formatDate, formatCPF } from '~/utils';
 
 const currentStep = ref(1);
 const { register, loading, error } = useAuth();
+const toast = useToast();
 
 const userData = reactive({
     email: '',
@@ -56,6 +57,8 @@ const personData = reactive({
     first_name: '',
     last_name: '',
     birthdate: '',
+    cpf: '',
+    about: '',
     gender: ''
 });
 
@@ -66,7 +69,7 @@ const handleNextStep = (data: any) => {
 
 const handleSubmit = async (data: any) => {
     Object.assign(personData, data);
-    
+
     const completeData = {
         email: userData.email,
         password: userData.password,
@@ -74,8 +77,10 @@ const handleSubmit = async (data: any) => {
         person: {
             first_name: personData.first_name,
             last_name: personData.last_name,
+            cpf: formatCPF(personData.cpf),
             birthdate: formatDate(personData.birthdate),
-            gender: personData.gender.value
+            gender: personData.gender.value,
+            about: personData.about
         }
     };
 
@@ -86,4 +91,16 @@ const handleSubmit = async (data: any) => {
         console.error('Erro ao registrar o usuário', err);
     }
 };
+
+watch(error, (newError) => {
+    if (newError) {
+        toast.add({
+            id: 'insert_user',
+            title: 'Erro ao realizar cadastro!',
+            description: newError,
+            icon: 'mi-circle-error',
+            timeout: 5000,
+        })
+    }
+});
 </script>
