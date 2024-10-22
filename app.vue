@@ -1,6 +1,9 @@
 <template>
-  <NuxtLoadingIndicator />
   <div>
-    <NuxtPage />
+    <NuxtLoadingIndicator />
+    <UNotifications />
+    <div>
+      <NuxtPage />
+    </div>
   </div>
 </template>
