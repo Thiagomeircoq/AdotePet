@@ -42,20 +42,20 @@ export class AuthManager {
         }
     }
 
-    // async login(credentials: { email: string; password: string }) {
-    //     this.loading.value = true;
-    //     this.error.value = null;
+    async login(credentials: { email: string; password: string }) {
+        this.loading.value = true;
+        this.error.value = null;
 
-    //     try {
-    //         const response = await this.authService.login(credentials);
-    //         this.user.value = response.user;
-    //     } catch (err) {
-    //         this.error.value = 'Erro ao fazer login';
-    //         console.error(err);
-    //     } finally {
-    //         this.loading.value = false;
-    //     }
-    // }
+        try {
+            const response = await this.authService.login(credentials);
+            this.user.value = response.user;
+        } catch (err) {
+            this.error.value = 'Erro ao fazer login';
+            console.error(err);
+        } finally {
+            this.loading.value = false;
+        }
+    }
 
     logout() {
         this.user.value = null;
@@ -70,7 +70,7 @@ export function useAuth() {
         loading: manager.loading,
         error: manager.error,
         register: manager.register.bind(manager),
-        // login: manager.login.bind(manager),
+        login: manager.login.bind(manager),
         logout: manager.logout.bind(manager)
     };
 }

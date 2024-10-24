@@ -1,28 +1,3 @@
-<script setup lang="ts">
-import { z } from 'zod'
-import type { FormSubmitEvent } from '#ui/types'
-
-const schema = z.object({
-    email: z.string().email('Invalid email'),
-    password: z.string().min(8, 'Must be at least 8 characters'),
-    rememberMe: z.boolean().optional()
-})
-
-type Schema = z.output<typeof schema>
-
-const state = reactive({
-    email: '',
-    password: '',
-    rememberMe: false,
-    submitted: false
-})
-
-async function onSubmit(event: FormSubmitEvent<Schema>) {
-    state.submitted = true
-    console.log(event.data)
-}
-</script>
-
 <template>
     <div class="bg-cover bg-center h-screen bg-stone-100">
         <div class="flex h-screen">
@@ -34,11 +9,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                     </div>
                     <UForm :schema="schema" :state="state" class="flex flex-col mt-5" @submit="onSubmit">
                         <div class="flex flex-col gap-5">
-                            <UFormGroup label="E-mail" name="email" :error="state.submitted">
+                            <UFormGroup label="E-mail" name="email">
                                 <UInput icon="i-heroicons-envelope" size="lg" v-model="state.email" type="email"
                                     variant="outline" placeholder="E-mail" />
                             </UFormGroup>
-                            <UFormGroup label="Senha" name="password" :error="state.submitted">
+                            <UFormGroup label="Senha" name="password">
                                 <UInput icon="i-heroicons-lock-closed" size="lg" v-model="state.password"
                                     type="password" variant="outline" placeholder="Senha" />
                             </UFormGroup>
@@ -47,7 +22,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                             <UCheckbox v-model="state.rememberMe" label="Lembre-se de mim" />
                             <a href="#" class="text-amber-600 text-sm hover:underline">Esqueceu sua senha?</a>
                         </div>
-                        <UButton class="flex justify-center mt-5" size="lg" color="amber" variant="solid" trailing>
+                        <UButton type="submit" class="flex justify-center mt-5" size="lg" color="amber" variant="solid" trailing>
                             Entrar
                         </UButton>
                     </UForm>
@@ -71,3 +46,44 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         </div>
     </div>
 </template>
+
+<script setup lang="ts">
+import { ref, reactive } from 'vue';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
+import { useAuth } from '@/composables/useAuth';
+
+const schema = z.object({
+    email: z.string().email('Email inválido'),
+    password: z.string().min(8, 'A senha deve ter pelo menos 8 caracteres'),
+    rememberMe: z.boolean().optional()
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive({
+    email: '',
+    password: '',
+    rememberMe: false,
+    submitted: false
+});
+
+const { login, error } = useAuth();
+
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+    state.submitted = true;
+
+    const validationResult = schema.safeParse(event.data);
+
+    if (!validationResult.success) {
+        console.error(validationResult.error.format());
+        return;
+    }
+
+    await login({ email: state.email, password: state.password });
+
+    if (error.value) {
+        console.error('Erro de login:', error.value);
+    }
+}
+</script>
