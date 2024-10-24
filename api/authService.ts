@@ -19,4 +19,19 @@ export class AuthService extends ApiService {
             throw error;
         }
     }
+
+    async login(data: object): Promise<any> {
+        try {
+            const response = await axios.post(`${this.baseUrl}/auth/login`, data, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                withCredentials: true,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao cadastrar o usuário', error);
+            throw error;
+        }
+    }
 }
