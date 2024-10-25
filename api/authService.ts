@@ -25,12 +25,17 @@ export class AuthService extends ApiService {
             const response = await axios.post(`${this.baseUrl}/auth/login`, data, {
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                withCredentials: true,
+                }
             });
+    
+            const token = response.data.token;
+    
+            const authCookie = useCookie('token');
+            authCookie.value = token;
+    
             return response.data;
         } catch (error) {
-            console.error('Erro ao cadastrar o usuário', error);
+            console.error('Erro ao logar o usuário', error);
             throw error;
         }
     }

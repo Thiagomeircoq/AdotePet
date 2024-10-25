@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from '~/store/auth';
+
 const links = [
     [
         {
@@ -23,6 +26,9 @@ const links = [
         },
     ]
 ]
+
+const authStore = useAuthStore();
+const { authenticated } = storeToRefs(authStore);
 </script>
 
 <template>
@@ -33,13 +39,21 @@ const links = [
             </a>
         </div>
 
-        <div class="flex items-center space-x-8">
-            <div class="flex items-center space-x-4">
-                <UButton size="md" color="amber" variant="solid" label="Anunciar"
-                    trailing />
-                <UButton size="md" color="amber" variant="outline" label="Entrar"
-                    trailing />
-            </div>
+        <div class="flex items-center space-x-4">
+            <UButton size="md" color="amber" variant="solid" label="Anunciar" trailing />
+            <UButton v-if="!authenticated" size="md" color="amber" variant="outline" label="Entrar" trailing />
+            
+            <template v-else>
+                <div class="flex gap-2">
+                    <div class="border border-amber-500 p-1 rounded-full flex justify-center items-center">
+                        <UAvatar src="https://avatars.githubusercontent.com/u/739984?v=4" alt="Avatar" />
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="text-xs font-semibold text-gray-800">Thiago Meira</span>
+                        <a class="text-xs text-gray-800 underline" href="#">Sair</a>
+                    </div>
+                </div>
+            </template>
         </div>
     </header>
 </template>
