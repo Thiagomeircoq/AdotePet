@@ -52,6 +52,12 @@ import { ref, reactive } from 'vue';
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { useAuth } from '@/composables/useAuth';
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from '~/store/auth';
+const { authenticateUser } = useAuthStore();
+const { authenticated } = storeToRefs(useAuthStore());
+const router = useRouter();
+const toast = useToast();
 
 const schema = z.object({
     email: z.string().email('Email inválido'),
@@ -80,10 +86,28 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         return;
     }
 
-    await login({ email: state.email, password: state.password });
+    // await login({ email: state.email, password: state.password });
+
+    await authenticateUser({ email: state.email, password: state.password });
+    
+    if (authenticated) {
+        router.push('/');
+    }
 
     if (error.value) {
         console.error('Erro de login:', error.value);
     }
 }
+
+watch(error, (newError) => {
+    if (newError) {
+        toast.add({
+            id: 'insert_user',
+            title: 'Erro ao realizar o login!',
+            description: newError,
+            icon: 'mi-circle-error',
+            timeout: 5000,
+        })
+    }
+});
 </script>
