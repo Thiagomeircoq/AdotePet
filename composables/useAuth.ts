@@ -49,9 +49,12 @@ export class AuthManager {
         try {
             const response = await this.authService.login(credentials);
             this.user.value = response.user;
-        } catch (err) {
-            this.error.value = 'Erro ao fazer login';
-            console.error(err);
+        } catch (err: any) {
+            if (err.response && err.response.data && err.response.data.message) {
+                this.error.value = err.response.data.message;
+            } else {
+                this.error.value = 'Erro ao fazer login';
+            }
         } finally {
             this.loading.value = false;
         }
