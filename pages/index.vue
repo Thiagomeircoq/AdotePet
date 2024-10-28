@@ -16,7 +16,8 @@
                         </p>
 
                         <div class="flex gap-3">
-                            <UButton class="px-4 items-center py-3 gap-3 flex rounded-lg" color="amber" variant="solid"
+                            <UButton @click="navigateTo('/adote/pets-adocao')"
+                                class="px-4 items-center py-3 gap-3 flex rounded-lg" color="amber" variant="solid"
                                 trailing>
                                 <img width="50px" src="../public/img/adotepet-white.svg" alt="">
                                 <div class="flex text-left flex-col">
