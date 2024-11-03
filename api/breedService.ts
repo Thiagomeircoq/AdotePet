@@ -15,4 +15,14 @@ export class BreedService extends ApiService {
             throw error;
         }
     }
+
+    async getAllBreeds(): Promise<any> {
+        try {
+            const response = await axios.get(`${this.baseUrl}/breed/`);
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao buscar as raças', error);
+            throw error;
+        }
+    }
 }

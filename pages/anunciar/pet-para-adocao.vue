@@ -2,12 +2,28 @@
     <div class="bg-cover bg-center h-screen bg-stone-100">
         <div class="flex h-screen">
             <div class="flex flex-col w-1/2">
-                <form class="relative flex flex-col h-full justify-between" @submit.prevent="handleSubmit">
+                <FormWizard />
+                <!-- <form class="relative flex flex-col h-full justify-between" @submit.prevent="handleSubmit">
                     <div class="flex flex-col py-20 px-20 h-full items-center">
+
                         <div class="flex flex-col gap-3 w-3/4 justify-center h-full">
                             <div class="bg-amber-100 px-4 py-3 rounded-sm text-gray-900">
                                 Vamos começar com algumas informações básicas.
                             </div>
+
+                            <UFormGroup class="flex flex-col" label="Espécie">
+                                <USelectMenu size="lg" v-model="selectedSpecies" :options="speciesOptions"
+                                    placeholder="Selecione a espécie" />
+                            </UFormGroup>
+                            <UFormGroup class="flex flex-col" label="Raça">
+                                <USelectMenu size="lg" v-model="selectedBreeds" :options="breedOptions"
+                                    placeholder="Selecione a raça" />
+                            </UFormGroup>
+                            <UFormGroup class="flex flex-col" label="Gênero">
+                                <USelectMenu size="lg" v-model="selectGender" :options="gender"
+                                    placeholder="Selecione o gênero" />
+                            </UFormGroup>
+
 
                             <UFormGroup class="flex flex-col" label="Foto do pet">
                                 <input ref="fileInput" type="file" class="hidden" @change="onFileChange" />
@@ -23,8 +39,9 @@
                                     </span>
                                 </div>
                             </UFormGroup>
-                            <ImageCropper class="bg-amber-100 flex justify-center items-center" :visible="isCropperVisible" :imageSrc="selectedImage"
-                                @close="isCropperVisible = false" @crop="onImageCropped" />
+                            <ImageCropper class="bg-amber-100 flex justify-center items-center"
+                                :visible="isCropperVisible" :imageSrc="selectedImage" @close="isCropperVisible = false"
+                                @crop="onImageCropped" />
                         </div>
                     </div>
                     <div class="flex justify-between w-full p-4 border-gray-800 bg-white items-center">
@@ -40,7 +57,7 @@
                             Prosseguir
                         </UButton>
                     </div>
-                </form>
+                </form> -->
             </div>
             <section class="w-1/2 bg-stone-200 relative">
                 <header class="p-10 absolute right-0">
@@ -56,12 +73,55 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import ImageCropper from '~/components/ImageCropper.vue';
+import FormWizard from '~/components/anunciar/FormWizard.vue';
+import { useBreed } from '@/composables/useBreed';
+import { useSpecie } from '@/composables/useSpecie';
+
+definePageMeta({
+    middleware: ["auth"]
+});
 
 const fileInput = ref(null);
 const selectedImage = ref('');
 const isCropperVisible = ref(false);
+
+const selectedSpecies = ref([]);
+const selectedBreeds = ref([]);
+const selectGender = ref([]);
+const breedOptions = ref([]);
+
+const { breeds, fetchBreedsBySpecies, loading: breedsLoading, error: breedsError } = useBreed();
+const { species, loading: speciesLoading, error: speciesError } = useSpecie();
+const gender = [
+    { value: 'M', label: 'Macho' },
+    { value: 'F', label: 'Fêmea' },
+];
+
+const speciesOptions = computed(() =>
+    species.value.map(specie => ({
+        label: specie.name,
+        value: specie.id
+    }))
+);
+
+watch(selectedSpecies, async (newSpecies) => {
+    selectedBreeds.value = [];
+    if (newSpecies) {
+        const breeds = await fetchBreedsBySpecies(newSpecies.value);
+        if (breeds) {
+            breedOptions.value = breeds.map(breed => ({
+                label: breed.name,
+                value: breed.id
+            }));
+        } else {
+            breedOptions.value = [];
+        }
+    } else {
+        breedOptions.value = [];
+    }
+});
 
 function triggerFileSelection() {
     fileInput.value.click();
