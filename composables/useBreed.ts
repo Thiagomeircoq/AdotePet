@@ -1,6 +1,5 @@
-import { ref, onMounted } from 'vue';
-import { BreedService } from '@/api/breedService';
-import { SpeciesService } from '@/api/specieService';
+import { ref, onMounted } from "vue";
+import { BreedService } from "@/api/breedService";
 
 export interface Breed {
     id: string;
@@ -11,34 +10,43 @@ export interface Breed {
     };
 }
 
-export class BreedManager {
-    private breedService: BreedService;
-    private speciesService: SpeciesService;
-
-    public species = ref<Breed[]>([]);
-    public loading = ref(true);
-    public error = ref<string | null>(null);
-
-    constructor() {
-        this.breedService = new BreedService();
-        this.speciesService = new SpeciesService();
-    }
-
-    async getBreedsBySpecies(speciesIds: string[]) {
-        try {
-            return await this.breedService.fetchBreedsBySpecies(speciesIds);
-        } catch (err) {
-            throw err;
-        }
-    }
-}
-
 export function useBreed() {
-    const manager = new BreedManager();
+    const breeds = ref<Breed[]>([]);
+    const loading = ref(true);
+    const error = ref<string | null>(null);
+
+    const breedService = new BreedService();
+
+    const fetchAllBreeds = async () => {
+        loading.value = true;
+        try {
+            breeds.value = await breedService.getAllBreeds();
+        } catch (err) {
+            error.value = "Erro ao buscar as raças";
+        } finally {
+            loading.value = false;
+        }
+    };
+
+    const fetchBreedsBySpecies = async (speciesIds: string[]) => {
+        loading.value = true;
+        try {
+            return await breedService.fetchBreedsBySpecies(speciesIds);
+        } catch (err) {
+            error.value = "Erro ao buscar as raças pela espécie";
+        } finally {
+            loading.value = false;
+        }
+    };
+
+    onMounted(() => {
+        fetchAllBreeds();
+    });
 
     return {
-        loading: manager.loading,
-        error: manager.error,
-        getBreedsBySpecies: manager.getBreedsBySpecies.bind(manager)
+        breeds,
+        loading,
+        error,
+        fetchBreedsBySpecies,
     };
 }

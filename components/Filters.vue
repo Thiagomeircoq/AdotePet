@@ -89,7 +89,7 @@ const selectedColors = ref<string[]>([]);
 const selectedGender = ref<{ [key: string]: boolean }>({});
 
 const { species, loading: speciesLoading, error: speciesError } = useSpecie();
-const { getBreedsBySpecies } = useBreed();
+const { fetchBreedsBySpecies } = useBreed();
 const { pets, loading, error, getPetsByFilters } = usePet();
 
 watch(
@@ -97,7 +97,7 @@ watch(
     async (newSelectedSpecies) => {
         const selectedSpeciesIds = Object.keys(newSelectedSpecies).filter(id => newSelectedSpecies[id]);
         if (selectedSpeciesIds.length > 0) {
-            const breedsData = await getBreedsBySpecies(selectedSpeciesIds);
+            const breedsData = await fetchBreedsBySpecies(selectedSpeciesIds);
 
             breeds.value = breedsData.map(breed => ({
                 value: breed.id,
