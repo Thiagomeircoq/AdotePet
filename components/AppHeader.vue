@@ -4,6 +4,10 @@ import { useAuthStore } from '~/store/auth';
 
 const authStore = useAuthStore();
 const { authenticated } = storeToRefs(authStore);
+
+onMounted(() => {
+    authStore.checkAuthentication();
+});
 </script>
 
 <template>

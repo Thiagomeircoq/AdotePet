@@ -19,7 +19,7 @@
                     <div v-if="currentStep === 1" class="flex justify-center mt-5">
                         <p class="text-sm">
                             <span class="font-semibold text-stone-700">Já possui um cadastro? </span>
-                            <a href="#" class="text-amber-600 text-sm hover:underline">Realize o login!</a>
+                            <a @click="navigateTo('/login')" class="text-amber-600 text-sm hover:underline cursor-pointer">Realize o login!</a>
                         </p>
                     </div>
                 </main>
@@ -40,12 +40,16 @@
 import { reactive, ref, watch } from 'vue';
 import PersonForm from '~/components/auth/PersonForm.vue';
 import UserForm from '~/components/auth/UserForm.vue';
+import { useAuthStore } from '~/store/auth';
 import { useAuth } from '@/composables/useAuth';
 import { formatDate, formatCPF } from '~/utils';
 
+const { registerUser } = useAuthStore();
+const { authenticated, error: authError } = storeToRefs(useAuthStore());
 const currentStep = ref(1);
 const { register, loading, error } = useAuth();
 const toast = useToast();
+const router = useRouter();
 
 const userData = reactive({
     email: '',
@@ -85,14 +89,15 @@ const handleSubmit = async (data: any) => {
     };
 
     try {
-        await register(completeData);
-        console.log('Usuário registrado com sucesso');
+        await registerUser(completeData);
+
+        router.push('/');
     } catch (err) {
         console.error('Erro ao registrar o usuário', err);
     }
 };
 
-watch(error, (newError) => {
+watch(authError, (newError) => {
     if (newError) {
         toast.add({
             id: 'insert_user',

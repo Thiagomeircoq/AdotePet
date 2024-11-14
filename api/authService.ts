@@ -13,6 +13,12 @@ export class AuthService extends ApiService {
                     'Content-Type': 'application/json'
                 }
             });
+            
+            const token = response.data.token;
+    
+            const authCookie = useCookie('token');
+            authCookie.value = token;
+    
             return response.data;
         } catch (error) {
             console.error('Erro ao cadastrar o usuário', error);

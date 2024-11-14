@@ -30,7 +30,7 @@
                     <div class="flex justify-center mt-5">
                         <p class="text-sm">
                             <span class="font-semibold text-stone-700">Ainda não possui um cadastro? </span>
-                            <a href="#" class="text-amber-600 text-sm hover:underline">Cadastre-se agora!</a>
+                            <a @click="navigateTo('/register')" class="text-amber-600 text-sm hover:underline cursor-pointer">Cadastre-se agora!</a>
                         </p>
                     </div>
                 </main>
@@ -48,14 +48,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { useAuth } from '@/composables/useAuth';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '~/store/auth';
+import { useRouter } from 'vue-router';
+
 const { authenticateUser } = useAuthStore();
-const { authenticated } = storeToRefs(useAuthStore());
+const { authenticated, error: authError } = storeToRefs(useAuthStore());
 const router = useRouter();
 const toast = useToast();
 
@@ -74,8 +76,6 @@ const state = reactive({
     submitted: false
 });
 
-const { login, error } = useAuth();
-
 async function onSubmit(event: FormSubmitEvent<Schema>) {
     state.submitted = true;
 
@@ -86,20 +86,22 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         return;
     }
 
-    // await login({ email: state.email, password: state.password });
-
     await authenticateUser({ email: state.email, password: state.password });
     
-    if (authenticated) {
+    if (authenticated.value) {
         router.push('/');
-    }
-
-    if (error.value) {
-        console.error('Erro de login:', error.value);
+    } else if (authError.value) {
+        toast.add({
+            id: 'insert_user',
+            title: 'Erro ao realizar o login!',
+            description: authError.value,
+            icon: 'mi-circle-error',
+            timeout: 5000,
+        });
     }
 }
 
-watch(error, (newError) => {
+watch(authError, (newError) => {
     if (newError) {
         toast.add({
             id: 'insert_user',
@@ -107,7 +109,7 @@ watch(error, (newError) => {
             description: newError,
             icon: 'mi-circle-error',
             timeout: 5000,
-        })
+        });
     }
 });
 </script>
