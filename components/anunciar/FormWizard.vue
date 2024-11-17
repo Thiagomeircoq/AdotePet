@@ -12,7 +12,7 @@
                                 <StepTwo :modelValue="formData" @update:modelValue="updateFormData" />
                             </div>
                             <div v-if="currentStep === 3">
-                                <StepThree :modelValue="formData" @update:modelValue="updateFormData" />
+                                <!-- <StepThree :modelValue="formData" @update:modelValue="updateFormData" /> -->
                             </div>
                         </div>
                     </div>
