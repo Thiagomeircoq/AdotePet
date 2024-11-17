@@ -21,12 +21,18 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { useSpecie } from '@/composables/useSpecie';
-import { useBreed } from '@/composables/useBreed';
+import { useSpecie, type Specie } from '@/composables/useSpecie';
+import { useBreed, type Breed } from '@/composables/useBreed';
 
-const props = defineProps({
-    modelValue: Object,
-});
+interface FormData {
+    species: string | undefined;
+    breed: string | undefined;
+    gender: string | undefined;
+}
+
+const props = defineProps<{
+    modelValue: FormData;
+}>();
 
 const emit = defineEmits(['update:modelValue']);
 
@@ -51,22 +57,20 @@ const speciesOptions = computed(() =>
     }))
 );
 
-watch(localFormData.species,
-    async (newSpecies) => {
-        localFormData.breed = null;
-        if (newSpecies) {
-            const breeds = await fetchBreedsBySpecies(newSpecies);
-            if (breeds) {
-                breedOptions.value = breeds.map(breed => ({
-                    label: breed.name,
-                    value: breed.id
-                }));
-            } else {
-                breedOptions.value = [];
-            }
+watch(() => localFormData.value.species, async (newSpecies) => {
+    localFormData.value.breed = undefined;
+    if (newSpecies) {
+        const breeds = await fetchBreedsBySpecies(newSpecies.value);
+        if (breeds) {
+            breedOptions.value = breeds.map((breed: Breed) => ({
+                label: breed.name,
+                value: breed.id,
+            }));
         } else {
             breedOptions.value = [];
         }
+    } else {
+        breedOptions.value = [];
     }
-);
+});
 </script>
