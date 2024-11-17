@@ -19,7 +19,8 @@
                     <div v-if="currentStep === 1" class="flex justify-center mt-5">
                         <p class="text-sm">
                             <span class="font-semibold text-stone-700">Já possui um cadastro? </span>
-                            <a @click="navigateTo('/login')" class="text-amber-600 text-sm hover:underline cursor-pointer">Realize o login!</a>
+                            <a @click="navigateTo('/login')"
+                                class="text-amber-600 text-sm hover:underline cursor-pointer">Realize o login!</a>
                         </p>
                     </div>
                 </main>
@@ -91,7 +92,17 @@ const handleSubmit = async (data: any) => {
     try {
         await registerUser(completeData);
 
-        router.push('/');
+        if (authenticated.value) {
+            router.push('/');
+        } else if (authError.value) {
+            toast.add({
+                id: 'insert_user',
+                title: 'Erro ao realizar o login!',
+                description: authError.value,
+                icon: 'mi-circle-error',
+                timeout: 5000,
+            });
+        }
     } catch (err) {
         console.error('Erro ao registrar o usuário', err);
     }
