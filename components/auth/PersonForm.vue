@@ -16,7 +16,7 @@
             <div class="flex gap-4 w-full">
                 <UFormGroup class="w-1/2" label="Gênero" name="gender" required>
                     <USelectMenu v-model="PersonState.gender" placeholder="Selecione o gênero" size="lg"
-                        :options="genderOptions" />
+                        :options="gender" />
                 </UFormGroup>
                 <UFormGroup label="Data de nascimento" name="birthdate" required>
                     <UInput icon="i-heroicons-calendar" size="lg" v-model="PersonState.birthdate" variant="outline"
@@ -48,7 +48,7 @@ const emit = defineEmits(['prevStep', 'submitForm']);
 
 const props = defineProps(['personData']);
 
-const genderOptions = [
+const gender = [
     { value: 'M', label: 'Masculino' },
     { value: 'F', label: 'Feminino' },
 ];

@@ -25,4 +25,22 @@ export class PetService extends ApiService {
             throw error;
         }
     }
+
+    async createPet(petData: Record<string, any>) {
+        try {
+            const token = useCookie('token');
+
+            const response = await axios.post(`${this.baseUrl}/pet`, petData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token.value}`,
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao criar pet:', error);
+            throw error;
+        }
+    }
 }

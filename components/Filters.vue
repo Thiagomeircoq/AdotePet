@@ -53,31 +53,8 @@ import { useBreed, type Breed } from '@/composables/useBreed';
 import { useSpecie, type Specie } from '@/composables/useSpecie';
 import { usePet } from '@/composables/usePet';
 import { ref, watch, computed } from 'vue';
-
-const sizes = [
-    { value: 'FILHOTE', label: 'Filhote' },
-    { value: 'PEQUENO', label: 'Pequeno' },
-    { value: 'MEDIO', label: 'Médio' },
-    { value: 'GRANDE', label: 'Grande' }
-];
-
-const colors = [
-    { value: 'BRANCO', label: 'Branco' },
-    { value: 'PRETO', label: 'Preto' },
-    { value: 'MARROM', label: 'Marrom' },
-    { value: 'CINZA', label: 'Cinza' },
-    { value: 'DOURADO', label: 'Dourado' },
-    { value: 'BEGE', label: 'Bege' },
-    { value: 'AMARELO', label: 'Amarelo' },
-    { value: 'AZUL', label: 'Azul' },
-    { value: 'VERMELHO', label: 'Vermelho' },
-    { value: 'VERDE', label: 'Verde' }
-];
-
-const gender = [
-    { value: 'M', label: 'Macho' },
-    { value: 'F', label: 'Fêmea' },
-];
+import { useConstants } from '@/composables/useConstants';
+const { sizes, colors, gender } = useConstants();
 
 const breeds = ref<{ value: string; label: string }[]>([]);
 
