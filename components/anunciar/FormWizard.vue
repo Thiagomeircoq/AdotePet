@@ -12,7 +12,7 @@
                                 <StepTwo :modelValue="formData" @update:modelValue="updateFormData" />
                             </div>
                             <div v-if="currentStep === 3">
-                                <!-- <StepThree :modelValue="formData" @update:modelValue="updateFormData" /> -->
+                                <StepThree :modelValue="formData" @update:modelValue="updateFormData" />
                             </div>
                         </div>
                     </div>
@@ -43,13 +43,22 @@
 import { ref } from 'vue';
 import StepOne from './StepOne.vue';
 import StepTwo from './StepTwo.vue';
+import StepThree from './StepThree.vue';
+import { usePet } from '@/composables/usePet';
+
+const { createPet, error, loading } = usePet();
 
 const totalSteps = 3;
 const currentStep = ref(1);
 const formData = ref({
-    species: null,
-    breed: null,
+    specie_id: null,
+    breed_id: null,
     gender: null,
+    image: null,
+    color: null,
+    size: null,
+    name: null,
+    age: null,
 });
 
 function goToNextStep() {
@@ -64,12 +73,39 @@ function goToPreviousStep() {
     }
 }
 
-function handleSubmit() {
-    console.log("Dados do formulário:", formData.value);
+function toFormData(data: Record<string, any>): FormData {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+        if (value && typeof value === 'object' && 'value' in value) {
+            formData.append(key, value.value);
+        } else if (value instanceof File) {
+            formData.append(key, value);
+        } else if (Array.isArray(value)) {
+            value.forEach((item, index) => {
+                formData.append(`${key}[${index}]`, item);
+            });
+        } else if (value !== null && value !== undefined) {
+            formData.append(key, value.toString());
+        }
+    });
+
+    return formData;
 }
 
-function updateFormData(newData) {
-  formData.value = { ...formData.value, ...newData };
+async function handleSubmit() {
+    const fd = toFormData(formData.value);
+
+    try {
+        const response = await createPet(fd);
+        console.log('Pet criado com sucesso:', response);
+    } catch (err) {
+        console.error('Erro ao criar pet:', error.value);
+    }
+}
+
+function updateFormData(newData: Record<string, any>) {
+    formData.value = { ...formData.value, ...newData };
 }
 </script>
 

@@ -5,15 +5,15 @@
         </div>
 
         <UFormGroup class="flex flex-col" label="Espécie">
-            <USelectMenu size="lg" v-model="localFormData.species" :options="speciesOptions"
+            <USelectMenu size="lg" v-model="localFormData.specie_id" :options="speciesOptions"
                 placeholder="Selecione a espécie" />
         </UFormGroup>
         <UFormGroup class="flex flex-col" label="Raça">
-            <USelectMenu size="lg" v-model="localFormData.breed" :options="breedOptions"
+            <USelectMenu size="lg" v-model="localFormData.breed_id" :options="breedOptions"
                 placeholder="Selecione a raça" />
         </UFormGroup>
         <UFormGroup class="flex flex-col" label="Gênero">
-            <USelectMenu size="lg" v-model="localFormData.gender" :options="genderOptions"
+            <USelectMenu size="lg" v-model="localFormData.gender" :options="gender"
                 placeholder="Selecione o gênero" />
         </UFormGroup>
     </div>
@@ -23,10 +23,12 @@
 import { ref, computed, watch } from 'vue';
 import { useSpecie, type Specie } from '@/composables/useSpecie';
 import { useBreed, type Breed } from '@/composables/useBreed';
+import { useConstants } from '@/composables/useConstants';
+const { gender } = useConstants();
 
 interface FormData {
-    species: string | undefined;
-    breed: string | undefined;
+    specie_id: string | undefined;
+    breed_id: string | undefined;
     gender: string | undefined;
 }
 
@@ -45,11 +47,6 @@ const breedOptions = ref([]);
 const { breeds, fetchBreedsBySpecies, loading: breedsLoading, error: breedsError } = useBreed();
 const { species, loading: speciesLoading, error: speciesError } = useSpecie();
 
-const genderOptions = [
-    { value: 'M', label: 'Macho' },
-    { value: 'F', label: 'Fêmea' },
-];
-
 const speciesOptions = computed(() =>
     species.value.map((specie) => ({
         label: specie.name,
@@ -57,8 +54,8 @@ const speciesOptions = computed(() =>
     }))
 );
 
-watch(() => localFormData.value.species, async (newSpecies) => {
-    localFormData.value.breed = undefined;
+watch(() => localFormData.value.specie_id, async (newSpecies) => {
+    localFormData.value.breed_id = undefined;
     if (newSpecies) {
         const breeds = await fetchBreedsBySpecies(newSpecies.value);
         if (breeds) {

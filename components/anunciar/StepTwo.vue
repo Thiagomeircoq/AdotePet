@@ -26,20 +26,13 @@
 
 
 <script setup lang="ts">
-import { computed, watch } from 'vue';
-import { useSpecie } from '@/composables/useSpecie';
-import { useBreed } from '@/composables/useBreed';
+import { ref } from 'vue';
 
 const props = defineProps({
     modelValue: Object,
 });
 
 const emit = defineEmits(['update:modelValue']);
-const formData = computed({
-    get: () => props.modelValue,
-    set: (value) => emit('update:modelValue', value),
-});
-
 const fileInput = ref(null);
 const selectedImage = ref('');
 const isCropperVisible = ref(false);
@@ -50,7 +43,6 @@ function triggerFileSelection() {
 
 function onFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
-
     if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -62,7 +54,20 @@ function onFileChange(event: Event) {
 }
 
 function onImageCropped(croppedImage: string) {
-    console.log('Imagem cortada:', croppedImage);
+    const blob = dataURItoBlob(croppedImage);
+    const file = new File([blob], "pet-photo.jpg", { type: "image/jpeg" });
+    emit("update:modelValue", { image: file });
+    isCropperVisible.value = false;
 }
 
+function dataURItoBlob(dataURI: string): Blob {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+}
 </script>

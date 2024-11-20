@@ -17,6 +17,17 @@ export interface Pet {
     gender: string;
 }
 
+export interface CreatePet {
+    name: string;
+    specie_id: string;
+    color: string;
+    size: string;
+    age: number;
+    breed_id?: string;
+    gender: string;
+    image: FormData;
+}
+
 export class PetManager {
     private petService: PetService;
     
@@ -59,6 +70,21 @@ export class PetManager {
             this.loading.value = false;
         }
     }
+
+    async createPet(petData: CreatePet) {
+        this.loading.value = true
+        this.error.value = null;
+        
+        try {
+            const data = await this.petService.createPet(petData);
+            return data;
+        } catch (err) {
+            this.error.value = 'Erro ao buscar pets.';
+            throw err;
+        } finally {
+            this.loading.value = false;
+        }
+    }
 }
 
 export function usePet() {
@@ -70,5 +96,6 @@ export function usePet() {
         error: manager.error,
         getPetsByFilters: manager.getPetsByFilters.bind(manager),
         getPetById: manager.getPetById.bind(manager),
+        createPet: manager.createPet.bind(manager),
     };
 }
